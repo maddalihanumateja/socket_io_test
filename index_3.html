@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Testing Websockets</title>
+
+</head>
+
+<body>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script src="/socket.io/socket.io.js"></script>  
+  <script>
+    $(function () {
+    var socket = io();
+    var room ="";
+    $('form#private_message').hide();
+
+    $('form#set_room').submit(function(e){
+      e.preventDefault(); // prevents page reloading
+      socket.emit('set_room', {'room':$('#room').val(), 'username':$('#username').val()});
+      $('form#set_room').hide();
+      $('form#private_message').show();
+      return false;
+    });
+
+    $('form#private_message').submit(function(e){
+      e.preventDefault(); // prevents page reloading
+      socket.emit('send_private_message', {'to_socket':$('#to_socket').val(), 'message':$('#message').val(), 'room': room});
+      return false;
+    });
+
+    //sockets on client side send or listen to events from server side
+    socket.on('connection_event', function(obj){
+      $('#connection_logs').append($('<li>').text(obj['message']));
+      console.log(obj['connected_users']);
+    });
+    socket.on('recieved_private_message', function(msg){
+      $('#event_logs').append($('<li>').text(msg));
+    });
+
+    socket.on('disconnection_event', function(obj){
+      $('#connection_logs').append($('<li>').text(obj['message']));
+      console.log(obj['connected_users']);
+    });
+    socket.on('room_join_event', function(obj){
+      room = obj["room"]
+      console.log(obj['users_in_room']);
+
+      console.log(obj['message']);
+    });
+    socket.on('room_leave_event', function(obj){
+      room = obj["room"]
+      console.log(obj['users_in_room']);
+      
+      console.log(obj['message']);
+    });
+  });
+  </script>
+    <h1>Connection logs</h1>
+    <ul id="connection_logs"></ul>
+    <h1>Event logs</h1>
+    <ul id="event_logs"></ul>
+    <form action="" id="set_room">
+      <input id="room" autocomplete="off" placeholder="room" />
+      <input id="username" autocomplete="off" placeholder="name" />
+      <button>Send</button>
+    </form>
+    <form action="" id="private_message">
+      <input id="to_socket" autocomplete="off" placeholder="to socket id" />
+      <input id="message" autocomplete="off" placeholder="message" />
+      <button>Send</button>
+    </form>
+</body>
+
+
+</html>

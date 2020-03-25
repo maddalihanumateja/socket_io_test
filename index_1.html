@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Testing Websockets</title>
+
+</head>
+
+<body>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script src="/socket.io/socket.io.js"></script>  
+  <script>
+  	var socket = io();
+  </script>
+
+    <ul id="event_logs"></ul>
+    <form action="">
+      <input id="message" autocomplete="off" />
+	  <input id="person" autocomplete="off" />
+      <button>Send</button>
+    </form>
+</body>
+
+
+</html>
